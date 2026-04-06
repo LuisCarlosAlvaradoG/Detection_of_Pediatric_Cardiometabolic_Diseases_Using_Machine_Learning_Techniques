@@ -1,0 +1,10 @@
+Citas/
+.venv/
+__pycache__/
+*.docx
+*.pdf
+*.xlsx
+*.drawio
+*.md
+*.txt
+SVM.py
