@@ -8,5 +8,7 @@ __pycache__/
 *.drawio
 *.md
 *.txt
+!requirements.txt
+
 SVM.py
 *.png
