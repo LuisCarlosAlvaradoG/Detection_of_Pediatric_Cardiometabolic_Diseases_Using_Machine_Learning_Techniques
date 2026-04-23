@@ -1,5 +1,6 @@
 Citas/
 .venv/
+.claude/
 __pycache__/
 *.docx
 *.pdf
@@ -8,3 +9,4 @@ __pycache__/
 *.md
 *.txt
 SVM.py
+*.png
