@@ -74,10 +74,12 @@ def _roc_multiclass(model, X_te, Y_te, title, path):
         ax.plot(fpr, tpr, lw=2, color=PALETA[i % len(PALETA)],
                 label=f"{cls}  (AUC = {auc(fpr, tpr):.3f})")
     ax.plot([0, 1], [0, 1], 'k--', lw=0.8, alpha=0.6)
-    ax.set(xlim=(0, 1), ylim=(0, 1.02), title=title,
-           xlabel="False Positive Rate (FPR)",
-           ylabel="True Positive Rate (TPR)")
-    ax.legend(loc="lower right", fontsize=8)
+    ax.set(xlim=(0, 1), ylim=(0, 1.02))
+    ax.set_title(title, fontsize=15, fontweight='bold')
+    ax.set_xlabel("False Positive Rate (FPR)", fontsize=15)
+    ax.set_ylabel("True Positive Rate (TPR)", fontsize=15)
+    ax.tick_params(axis='both', labelsize=13)
+    ax.legend(loc="lower right", fontsize=15)
     ax.grid(linestyle='--', alpha=0.3)
     for spine in ('top', 'right'):
         ax.spines[spine].set_visible(False)
@@ -94,10 +96,12 @@ def _roc_binary(model, X_te, Y_te, title, path):
     ax.plot(fpr, tpr, lw=2, color=PALETA[0],
             label=f"AUC = {auc(fpr, tpr):.3f}")
     ax.plot([0, 1], [0, 1], 'k--', lw=0.8, alpha=0.6)
-    ax.set(xlim=(0, 1), ylim=(0, 1.02), title=title,
-           xlabel="False Positive Rate (FPR)",
-           ylabel="True Positive Rate (TPR)")
-    ax.legend(loc="lower right", fontsize=9)
+    ax.set(xlim=(0, 1), ylim=(0, 1.02))
+    ax.set_title(title, fontsize=15, fontweight='bold')
+    ax.set_xlabel("False Positive Rate (FPR)", fontsize=15)
+    ax.set_ylabel("True Positive Rate (TPR)", fontsize=15)
+    ax.tick_params(axis='both', labelsize=13)
+    ax.legend(loc="lower right", fontsize=15)
     ax.grid(linestyle='--', alpha=0.3)
     for spine in ('top', 'right'):
         ax.spines[spine].set_visible(False)
@@ -300,13 +304,13 @@ def confusion_matrix_binary(model, X_test, Y_test, X_val, Y_val,
     disp = ConfusionMatrixDisplay(cm, display_labels=["Normal", "Altered"])
     disp.plot(ax=ax, values_format='d', cmap='Blues', colorbar=False)
 
-    ax.set_title(title, fontsize=13, fontweight='bold', pad=12)
-    ax.set_xlabel("Predicted Label", fontsize=11)
-    ax.set_ylabel("True Label", fontsize=11)
-    ax.tick_params(labelsize=10)
+    ax.set_title(title, fontsize=15, fontweight='bold', pad=12)
+    ax.set_xlabel("Predicted Label", fontsize=15)
+    ax.set_ylabel("True Label", fontsize=15)
+    ax.tick_params(axis='both', labelsize=13)
 
     for text in ax.texts:
-        text.set_fontsize(13)
+        text.set_fontsize(15)
         text.set_fontweight('bold')
 
     plt.tight_layout()
@@ -339,18 +343,18 @@ def confusion_matrix_mult(model, Y_train, X_test, Y_test, X_val, Y_val,
     # --- Plot ---
     cm   = confusion_matrix(Y_test, y_pred_thr, labels=classes)
     n    = len(classes)
-    fig, ax = plt.subplots(figsize=(4 + n, 3 + n))  # escala con número de clases
+    fig, ax = plt.subplots(figsize=(4 + n, 3 + n))
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
     disp.plot(ax=ax, values_format='d', cmap='Blues', colorbar=False)
 
-    ax.set_title(title, fontsize=13, fontweight='bold', pad=12)
-    ax.set_xlabel("Predicted Label", fontsize=11)
-    ax.set_ylabel("True Label", fontsize=11)
-    ax.tick_params(axis='both', labelsize=10)
+    ax.set_title(title, fontsize=15, fontweight='bold', pad=12)
+    ax.set_xlabel("Predicted Label", fontsize=15)
+    ax.set_ylabel("True Label", fontsize=15)
+    ax.tick_params(axis='both', labelsize=13)
     plt.setp(ax.get_xticklabels(), rotation=30, ha='right')
 
     for text in ax.texts:
-        text.set_fontsize(12)
+        text.set_fontsize(15)
         text.set_fontweight('bold')
 
     plt.tight_layout()
@@ -358,7 +362,6 @@ def confusion_matrix_mult(model, Y_train, X_test, Y_test, X_val, Y_val,
     print("  Optimal thresholds per class (ROC corner):")
     for cls, t in zip(classes, thr_ovr):
         print(f"    {cls}: {t:.4f}")
-
 
 def metrics(model, X_train, X_test, X_val, Y_train, Y_test, Y_val, Y):
     """
@@ -696,7 +699,7 @@ def plot_logreg_coefs_panel_safe(
     label_max_chars: max characters for y-axis labels.
     """
 
-    sort_col     = "abs_coef_std" if "abs_coef_std" in df_coefs.columns else "z"
+    sort_col      = "abs_coef_std" if "abs_coef_std" in df_coefs.columns else "z"
     is_multiclass = "class" in df_coefs.columns
 
     fig_h = min(max_fig_h, max(4.0, 0.45 * top_k + 1.5))
@@ -708,27 +711,21 @@ def plot_logreg_coefs_panel_safe(
         # --------------------------------------------------------------
         classes = df_coefs["class"].unique()
 
-        # Ranking global: max abs_coef_std de una feature entre todas las clases
         if multiclass_agg == "abs_mean":
-            global_imp = (
-                df_coefs.groupby("feature")[sort_col].mean()
-            )
-        else:  # abs_max
-            global_imp = (
-                df_coefs.groupby("feature")[sort_col].max()
-            )
+            global_imp = df_coefs.groupby("feature")[sort_col].mean()
+        else:
+            global_imp = df_coefs.groupby("feature")[sort_col].max()
 
         top_features = (
             global_imp.sort_values(ascending=False)
                        .head(top_k)
                        .index.tolist()
         )
-        # bottom-to-top para barh
-        top_features = top_features[::-1]
+        top_features = top_features[::-1]  # bottom-to-top para barh
 
-        n_cls  = len(classes)
-        bar_h  = 0.8 / n_cls
-        y_base = np.arange(len(top_features), dtype=float)
+        n_cls         = len(classes)
+        bar_h         = 0.8 / n_cls
+        y_base        = np.arange(len(top_features), dtype=float)
         x_vals_all    = []
         legend_handles = []
 
@@ -763,9 +760,10 @@ def plot_logreg_coefs_panel_safe(
         legend = ax.legend(
             handles=legend_handles,
             title="Color = Class  (standardised coefficients)",
-            title_fontsize=13,
-            fontsize=12,
-            loc="lower right",
+            title_fontsize=14,
+            fontsize=13,
+            loc="upper left",
+            bbox_to_anchor=(1.01, 1),
             framealpha=0.92,
             edgecolor="gray",
             borderpad=1.0,
@@ -777,11 +775,14 @@ def plot_logreg_coefs_panel_safe(
         ax.set_xlim(-x_max * 1.18, x_max * 1.18)
         ax.set_xlabel(
             "Standardised coefficient  (positive → right,  negative → left)",
-            fontsize=14
+            fontsize=15
         )
 
     else:
-        df_top = df_coefs.head(top_k).iloc[::-1]  
+        # --------------------------------------------------------------
+        # BINARY — barra firmada por feature
+        # --------------------------------------------------------------
+        df_top = df_coefs.head(top_k).iloc[::-1]
         feats  = [_shorten(f, label_max_chars) for f in df_top["feature"]]
         vals   = df_top["coef_std"].values if "coef_std" in df_top.columns \
                  else df_top["coef"].values
@@ -799,7 +800,7 @@ def plot_logreg_coefs_panel_safe(
             ax.text(
                 v + (0.025 * x_max if v >= 0 else -0.025 * x_max),
                 yi, f"{v:.3f}", va="center",
-                ha="left" if v >= 0 else "right", fontsize=14
+                ha="left" if v >= 0 else "right", fontsize=15
             )
 
         legend_handles = [
@@ -811,16 +812,21 @@ def plot_logreg_coefs_panel_safe(
         legend = ax.legend(
             handles=legend_handles,
             title="Color meaning  (standardised coefficients)",
-            title_fontsize=13, fontsize=13,
-            loc="lower right", framealpha=0.92,
-            edgecolor="gray", borderpad=1.0,
+            title_fontsize=14,
+            fontsize=13,
+            loc="upper left",
+            bbox_to_anchor=(1.01, 1),
+            framealpha=0.92,
+            edgecolor="gray",
+            borderpad=1.0,
         )
         legend.get_title().set_fontweight("bold")
         ax.set_xlabel(
             "Standardised coefficient  (positive → right,  negative → left)",
-            fontsize=14
+            fontsize=15
         )
 
+    # --- Formato común ---
     ax.set_title(
         f"{model_name} — Top {top_k} features by coefficient magnitude",
         fontsize=17, weight="bold", pad=14
